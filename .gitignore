@@ -1,0 +1,4 @@
+./weights/
+./output/
+./GroundingDINO/weights/
+./OVSeg/weights/
