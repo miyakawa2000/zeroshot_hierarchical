@@ -1,0 +1,16 @@
+leaf_masks_collection:
+  temp: 1024
+
+leaf_segmentation:
+  output_img_size: (368, 448)
+  min_area_th: 100
+  max_area_th: 49459 # 30% of the image size
+  th_ratio: 0.7
+
+plant_segmentation:
+  eps_minsamples_dict:
+    "08_12": (50, 2)
+    "08_19": (70, 2)
+  min_area_th: 600
+  num_steps: 10
+  output_img_size: (368, 448)
