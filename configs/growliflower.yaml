@@ -1,5 +1,9 @@
-leaf_masks_collection:
-  temp: 1024
+leaf_mask_collection:
+  class_names: "green leaf,soil"
+  trg_class_names: "green leaf"
+  gran: 0.8
+  min_maxk_area: 0
+  use_sliding_window: False
 
 leaf_segmentation:
   output_img_size: (368, 448)

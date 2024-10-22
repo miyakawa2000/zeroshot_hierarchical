@@ -4,6 +4,13 @@ leaf_mask_collection:
   gran: 0.8
   min_maxk_area: 0
   dsize: (1024, 1024)
+  use_sliding_window: True
+
+leaf_segmentation:
+  output_img_size: (1024, 1024)
+  min_area_th: 100
+  max_area_th: 314572 # 30% of the image size
+  th_ratio: 0.7
 
 plant_segmentation:
   eps_minsamples_dict: 
