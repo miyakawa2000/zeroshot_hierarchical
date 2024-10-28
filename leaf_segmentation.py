@@ -8,18 +8,12 @@ import numpy as np
 from tqdm import tqdm
 
 from utils.path import basename
+from utils.fileio import str_to_tuple
 from evaluation.metrics import area
 from leafonlysam.LeafOnlySAM import istoobig, remove_toobig
 
 
-def merge_masks_with_LSAM(masks_dir: str, min_area_th: float=0, max_area_th: float=np.inf, th_ratio=0.9, output_img_size =(1024, 1024)):
-    """Merge leaf masks with NMS using SCORE
-
-    Args:
-        masks_dir (str): その画像のマスク (cv2.IMREAD_GRAYSCALEで読み込まれる) 全てを含むdir．ただしboundaryに乗るマスクは含まない．metadata.csvも含まれていること．
-        th_IoU (float): Overlapを検知するIoUの閾値．
-        th_area (int): 面積がth_area以下のマスクは無視する．
-    """
+def merge_leaf_masks(masks_dir: str, min_area_th: float=0, max_area_th: float=np.inf, th_ratio=0.9, output_img_size =(1024, 1024)):
     
     # load metadata
     metadata_filename = 'metadata.csv'
@@ -59,11 +53,8 @@ def make_leaf_seg(masks_dirs: list, output_dir: str, config, VALIDATION_MODE=Fal
                   #min_area_th: float=0, max_area_th: float=1024*1024, output_img_size =(1024, 1024), 
                   #VALIDATION_MODE: bool=False):
     """
-    
     Args:
         masks_metrics (str, optional): 'stability_score' or 'predicted_iou' or 'area_negative'.
-
-
     """
     
     if not VALIDATION_MODE:
@@ -78,11 +69,11 @@ def make_leaf_seg(masks_dirs: list, output_dir: str, config, VALIDATION_MODE=Fal
     min_area_th = config['min_area_th']
     max_area_th = config['max_area_th']
     th_ratio = config['th_ratio']
-    output_img_size = config['output_img_size']
+    output_img_size = str_to_tuple(config['output_img_size'])
     
     # integration
     for masks_dir in tqdm(masks_dirs):
-        leaf_segmentation_output = merge_masks_with_LSAM(masks_dir, min_area_th=min_area_th, max_area_th=max_area_th, th_ratio=th_ratio, output_img_size=output_img_size)
+        leaf_segmentation_output = merge_leaf_masks(masks_dir, min_area_th=min_area_th, max_area_th=max_area_th, th_ratio=th_ratio, output_img_size=output_img_size)
         img_name = basename(masks_dir) + '.png'
         # output
         if not VALIDATION_MODE:

@@ -110,6 +110,9 @@ def read_stem_estim_result(csv_path):
     
     return ref_crds, root_crds, tip_crds, mask_ids
 
+def str_to_tuple(str_crd: str) -> tuple:
+    return tuple(map(int, str_crd.strip('()').split(',')))
+
 if __name__ == "__main__":
     temp = [{"a": 0, "b": 1}, {"a": 2, "b": 3}]
     save_dict_list_as_csv("temp.csv", temp)

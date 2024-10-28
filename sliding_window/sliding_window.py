@@ -129,7 +129,24 @@ def write_masks_to_folder(masks: List[Dict[str, Any]], path: str) -> None:
 
     return
 
-def save_masks_not_on_boundary(leaf_seg: list, save_folder: str, win_size: tuple=(512,512), min_area: int=0) -> None:
+def save_masks(leaf_seg, save_folder, min_area):
+    metadata = []
+    for i, mask_data in enumerate(leaf_seg):
+        mask_img = mask_data['segmentation']
+        save_filename = str(i) + '.png'
+        mask_area = area(mask_img)
+        if mask_area < min_area:
+            continue
+        metadata.append({'filename': save_filename, 'area': mask_area, 'predicted_iou': mask_data['predicted_iou'], 'stability_score': mask_data['stability_score']})
+        
+        save_path = os.path.join(save_folder, save_filename)
+        cv2.imwrite(save_path, mask_img * 255)
+    
+    if len(metadata) > 0:
+        save_dict_list_as_csv(os.path.join(save_folder, 'metadata.csv'), metadata)
+    return
+
+def save_masks_not_on_boundary(leaf_segs: list, save_folder: str, win_size: tuple=(512,512), min_area: int=0) -> None:
     """
     Args:
         leaf_seg (list): samの出力（全windowでのmask）
@@ -140,7 +157,7 @@ def save_masks_not_on_boundary(leaf_seg: list, save_folder: str, win_size: tuple
     corners = get_window_corners(win_size)
     
     metadata = []
-    for i, mask_data in enumerate(leaf_seg):
+    for i, mask_data in enumerate(leaf_segs):
         bbox = mask_data['bbox']
         win_id = mask_data['win_id']
         
@@ -158,10 +175,9 @@ def save_masks_not_on_boundary(leaf_seg: list, save_folder: str, win_size: tuple
         else: # cropped
             if not on_boundary(bbox, dsize, win_id):
                 mask_img = mask_data['segmentation']
-                cv2.imwrite("../output/mask1.png", mask_img * 255) # save the mask temporary
+                mask_img = mask_img.astype(np.uint8)*255
                 
-                # resize the mask and move to appropriate loc
-                mask_img = cv2.imread("../output/mask1.png", cv2.IMREAD_GRAYSCALE)
+                # resize the mask and move to appropriate location
                 mask_img = cv2.resize(mask_img, win_size, interpolation=cv2.INTER_CUBIC)
                 resized_mask_img = np.zeros(dsize)
                 win_y, win_x = corners[win_id]
@@ -178,5 +194,5 @@ def save_masks_not_on_boundary(leaf_seg: list, save_folder: str, win_size: tuple
     
     # save metadata.csv
     if len(metadata) > 0:
-        save_dict_list_as_csv(metadata, save_folder, 'metadata.csv')
+        save_dict_list_as_csv(os.path.join(save_folder, 'metadata.csv'), metadata)
     return

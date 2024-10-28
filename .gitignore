@@ -1,4 +1,10 @@
-./weights/
-./output/
-./GroundingDINO/weights/
-./OVSeg/weights/
+dataset/*
+output/leaf_masks/*
+output/leaf_segmentation/*
+output/plant_segmentation/*
+GroundingDINO/weights/*
+OVSeg/weights/*
+weights/*
+**/__pycache__/**
+test.py
+test.ipynb

@@ -15,7 +15,8 @@ from detectron2.data.detection_utils import read_image
 from OVSeg.open_vocab_seg import add_ovseg_config
 from OVSeg.open_vocab_seg.utils import SAMVisualizationDemo
 from utils.path import filename_wo_ext
-from sliding_window.sliding_window import sliding_window, save_masks_not_on_boundary
+from utils.fileio import str_to_tuple
+from sliding_window.sliding_window import sliding_window, save_masks, save_masks_not_on_boundary
 
 def setup_cfg(config_file):
     # load config from file and command-line arguments
@@ -30,10 +31,10 @@ def inference(img_paths: list, output_dir: str, config_path: str):
     
     mp.set_start_method("spawn", force=True)
     ovseg_config_file = './OVSeg/configs/ovseg_swinB_vitL_demo.yaml'
-    cfg = setup_cfg(ovseg_config_file)
+    ovseg_config = setup_cfg(ovseg_config_file)
     with open(config_path, 'r') as f:
         config = yaml.safe_load(f)
-        config = config['plant_segmentation']
+        config = config['leaf_mask_collection']
     class_names = config['class_names']
     class_names = class_names.split(',')
     trg_class_names = config['trg_class_names']
@@ -41,7 +42,7 @@ def inference(img_paths: list, output_dir: str, config_path: str):
     granularity = config['granularity']
     min_mask_area = config['min_mask_area']
     
-    demo = SAMVisualizationDemo(cfg, granularity, './weights/sam_vit_h_4b8939.pth', './OVSeg/weights/ovseg_clip_l_9a1909.pth')
+    demo = SAMVisualizationDemo(ovseg_config, granularity, './weights/sam_vit_h_4b8939.pth', './OVSeg/weights/ovseg_clip_l_9a1909.pth')
     for img_path in tqdm(img_paths):
         
         # load img
@@ -57,7 +58,7 @@ def inference(img_paths: list, output_dir: str, config_path: str):
                 leaf_segs.extend(ins_seg)
         
         if config['use_sliding_window']:
-            crop_imgs = sliding_window(img, tuple(config['dsize']))
+            crop_imgs = sliding_window(img, str_to_tuple(config['dsize']))
             
             # inference on each cropped img
             for crop_id, crop_img in enumerate(crop_imgs):
@@ -82,6 +83,13 @@ def inference(img_paths: list, output_dir: str, config_path: str):
                     save_folder = os.path.join(output_dir, img_name, trg_class_name)
                     os.makedirs(save_folder, exist_ok=True)
                     save_masks_not_on_boundary(leaf_segs[cls_idx], save_folder, win_size=(512,512), min_area=min_mask_area)
+        else:
+            # save all masks
+            img_name = filename_wo_ext(img_path)
+            save_folder = os.path.join(output_dir, img_name)
+            os.makedirs(save_folder, exist_ok=True)
+            save_masks(leaf_segs, save_folder, min_mask_area)
+    
     
     return
 
