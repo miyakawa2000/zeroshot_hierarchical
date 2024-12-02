@@ -15,7 +15,7 @@ def load_groundingDINO(config_path="GroundingDINO/groundingdino/config/Grounding
     detection_model = load_model(config_path, weights_path)
     return detection_model
 
-def get_attention_map(mask: np.ndarray, attention_path: str="text2img_attention.pt", query_idx: int=0) -> np.ndarray:
+def get_attention_map(mask: np.ndarray, attention_path: str="output/temp/text2img_attention.pt", query_idx: int=0) -> np.ndarray:
     """get attention map from text to image
 
     Args:

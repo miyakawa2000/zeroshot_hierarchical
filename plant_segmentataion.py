@@ -13,6 +13,7 @@ from scipy.spatial import distance
 from tqdm import tqdm
 
 from utils.path import basename, filename_wo_ext
+from utils.fileio import str_to_tuple
 from attention_map.gdino_attention import load_groundingDINO
 from attention_map.get_leaf_root import get_leaf_root_wls
 
@@ -169,7 +170,7 @@ def plant_segmentation(bgr_img_dir, masks_dirs: list, config_path, output_dir, G
     eps_minsamples_dict = config['eps_minsamples_dict']
     num_steps = config['num_steps']
     min_area_th = config['min_area_th']
-    output_img_size = tuple(config['output_img_size'])
+    output_img_size = str_to_tuple(config['output_img_size'])
     
     grounding_dino_model = load_groundingDINO()
     
@@ -178,7 +179,7 @@ def plant_segmentation(bgr_img_dir, masks_dirs: list, config_path, output_dir, G
         img_filename = img_name + ".png"
         bgr_img_path = os.path.join(bgr_img_dir, img_filename)
         img_date = next((date for date in eps_minsamples_dict.keys() if date in img_name), None)
-        eps, min_samples = eps_minsamples_dict[img_date]
+        eps, min_samples = str_to_tuple(eps_minsamples_dict[img_date])
         
         # calc leaf keypoints
         clustering_points, mask_ids = get_leaf_root_wls(bgr_img_path, masks_dir, eps, grounding_dino_model)
@@ -224,4 +225,4 @@ if __name__ == "__main__":
     config_path = args.config
     GENERATE_NEW_CLUSTER = args.gen_new_cluster
     
-    plant_segmentation(bgr_img_dir, masks_dirs, config_path, save_dir=output_dir, GENERATE_NEW_CLUSTER=GENERATE_NEW_CLUSTER)
+    plant_segmentation(bgr_img_dir, masks_dirs, config_path, output_dir=output_dir, GENERATE_NEW_CLUSTER=GENERATE_NEW_CLUSTER)

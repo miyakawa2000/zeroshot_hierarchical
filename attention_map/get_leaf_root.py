@@ -150,7 +150,7 @@ def get_leaf_root_wls(bgr_img_path, leaf_masks_dir, eps, grounding_dino_model):
         orgn_pos = mask2bbox(mask)
         metadata = AttentionMapMetaData(orgn_pos, length=512, id=mask_id)
         
-        leaf_root_crd, leaf_tip_crd = calc_leaf_keypoints(bgr_img, mask, metadata, metadata, grounding_dino_model)
+        leaf_root_crd, leaf_tip_crd = calc_leaf_keypoints(bgr_img, mask, metadata, grounding_dino_model)
         
         leaf_root_crds.append(leaf_root_crd)
         leaf_tip_crds.append(leaf_tip_crd)

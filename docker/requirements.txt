@@ -13,6 +13,9 @@ regex
 tqdm
 gdown
 matplotlib
+onnxruntime
+onnx
+scikit-learn
 # Torch
 --find-links https://download.pytorch.org/whl/cu113/torch_stable.html
 torch==1.10.1+cu113

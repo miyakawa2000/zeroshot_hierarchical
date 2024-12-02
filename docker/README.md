@@ -2,34 +2,18 @@
 
 1. Install requirements.txt
 ```
-$ pip install -r requirements.txt
+$ python3 -m pip install -r requirements.txt
 ```
 
-2. Clone OVSeg and rename the directory from 'ov-seg' to "OVSeg"
-```
-$ git clone https://github.com/facebookresearch/ov-seg.git
-$ mv ov-seg OVSeg
-```
-
-3. Install CLIP
+2. Install CLIP
 ```
 $ cd OVSeg/third_party/CLIP
-$ pip install -Ue .
+$ python3 -m pip install -Ue .
 ```
-
-4. clone the GroundingDINO repository form GitHub
-```
-$ git clone https://github.com/IDEA-Research/GroundingDINO.git
-```
-
-5. Change the current directory to the GroundingDINO folder
+3. Install GroundingDINO
 ```
 $ cd GroundingDINO
-```
-
-6. Install the required dependencies in the current folder
-```
-$ pip install -e .
+$ python3 -m pip install -e .
 ```
 
 ## in the case Error: "AttributeError: module 'PIL.Image' has no attribute 'LINEAR'"

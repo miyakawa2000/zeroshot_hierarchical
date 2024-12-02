@@ -6,7 +6,7 @@ leaf_mask_collection:
   use_sliding_window: False
 
 leaf_segmentation:
-  output_img_size: (368, 448)
+  output_img_size: (368, 448) # (H, W)
   min_area_th: 100
   max_area_th: 49459 # 30% of the image size
   th_ratio: 0.7
