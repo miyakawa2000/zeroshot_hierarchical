@@ -1,4 +1,4 @@
-dataset/*
+data/*
 output/
 GroundingDINO/weights/*
 OVSeg/weights/*

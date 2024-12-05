@@ -49,13 +49,6 @@ def merge_leaf_masks(masks_dir: str, min_area_th: float=0, max_area_th: float=np
     return output_img
 
 def make_leaf_seg(masks_dirs: list, output_dir: str, config, VALIDATION_MODE=False):
-                  #th_ratio: float=0.7, 
-                  #min_area_th: float=0, max_area_th: float=1024*1024, output_img_size =(1024, 1024), 
-                  #VALIDATION_MODE: bool=False):
-    """
-    Args:
-        masks_metrics (str, optional): 'stability_score' or 'predicted_iou' or 'area_negative'.
-    """
     
     if not VALIDATION_MODE:
         os.makedirs(output_dir, exist_ok=True)
@@ -99,7 +92,17 @@ if __name__ == '__main__':
     parser.add_argument("--config", type=str, help="path to config file (.yaml)")
     
     args = parser.parse_args()
-    masks_dirs = glob.glob(os.path.join(args.masks_dir, "*"))
+    ###
+    temp_masks_dirs = glob.glob(os.path.join(args.masks_dir, "*/"))
+    masks_dirs = []
+    for temp_masks_dir in temp_masks_dirs:
+        if os.path.exists(os.path.join(args.output_dir, basename(temp_masks_dir) + ".png")):
+            continue
+        elif os.path.basename(temp_masks_dir) == "setup.txt":
+            continue
+        else:
+            masks_dirs.append(temp_masks_dir)
+    ### 
     output_dir = args.output_dir
     config_path = args.config
     

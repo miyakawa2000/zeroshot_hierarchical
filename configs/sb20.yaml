@@ -10,3 +10,10 @@ leaf_segmentation:
   min_area_th: 130
   max_area_th: 92160 # 30% of the image size
   th_ratio: 0.7
+
+plant_segmentation:
+  eps_minsamples_dict:
+    "1589": (35, 2)
+  min_area_th: 130
+  num_steps: 45
+  output_img_size: (480, 640)
