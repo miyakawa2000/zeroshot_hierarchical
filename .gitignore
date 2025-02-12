@@ -1,4 +1,4 @@
-data/*
+dataset/*
 output/
 GroundingDINO/weights/*
 OVSeg/weights/*
@@ -7,3 +7,4 @@ weights/*
 test.py
 test.ipynb
 sam_ex.ipynb
+dataset.zip

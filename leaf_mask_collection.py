@@ -1,10 +1,9 @@
-import multiprocessing as mp
-
 import os
 import glob
 import argparse
 import yaml
 from tqdm import tqdm
+import multiprocessing as mp
 
 import cv2
 import numpy as np
@@ -93,15 +92,20 @@ def inference(img_paths: list, output_dir: str, config_path: str):
     
     return
 
-if __name__ == "__main__":
+def setup_args():
     parser = argparse.ArgumentParser()
-    parser.add_argument("--img_dir", type=str)
-    parser.add_argument("--output_dir", type=str)
-    parser.add_argument("--config", type=str, help="path to config file (.yaml)")
+    parser.add_argument("--dataset", type=str, help="dataset name", choices={'phenobench', 'growliflower', 'sb20'})
+    parser.add_argument("--mode", type=str, help="dataset type", choices={'val', 'test'})
     args = parser.parse_args()
     
-    img_paths = glob.glob(os.path.join(args.img_dir, "*.png"))
-    output_dir = args.output_dir
-    os.makedirs(output_dir, exist_ok=True)
-    config_path = args.config
+    return args
+
+if __name__ == "__main__":
+    args = setup_args()
+    img_dir = os.path.join('datasets', args.dataset, args.mode, 'images')
+    img_paths = glob.glob(os.path.join(img_dir, "*.png"))
+    output_dir = os.path.join('output/leaf_mask', args.dataset, args.mode)
+    os.makedirs(output_dir, exist_ok=False)
+    config_path = os.path.join('configs', args.dataset + '.yaml')
+    
     inference(img_paths, output_dir, config_path)
