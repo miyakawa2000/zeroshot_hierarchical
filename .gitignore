@@ -1,3 +1,4 @@
+baselines/*
 dataset/*
 output/
 GroundingDINO/weights/*

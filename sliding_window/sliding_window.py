@@ -5,11 +5,11 @@ import numpy as np
 from utils.fileio import save_dict_list_as_csv
 
 def sliding_window(img: np.ndarray, dsize: tuple) -> list:
-    """imgをsliding windowにより分割した画像のリストを返す
+    """return a list of cropped imgs by sliding window
 
     Args:
-        img (np.ndarray): 分割する画像
-        dsize (tuple): windowでcropした各画像をdsizeにresizeする
+        img (np.ndarray): input img
+        dsize (tuple): each cropped img will be resized to dsize
 
     Returns:
         crop_img_list (list): list of cropped imgs
@@ -20,7 +20,7 @@ def sliding_window(img: np.ndarray, dsize: tuple) -> list:
     x_step = int(win_w / 2)
     y_step = int(win_h / 2)
     crop_img_list = []
-    # 以下任意のwin sizeおよびストライドに対応するには要改善
+    # currently only for win_size=(512, 512), stride=(256, 256)
     for i in range(3):
         win_y = i * y_step
         for j in range(3):
@@ -34,7 +34,7 @@ def get_window_corners(window_size):
     x_step = int(window_size[1] / 2)
     y_step = int(window_size[0] / 2)
     corners = []
-    # 以下任意のwin sizeおよびストライドに対応するには要改善
+    # currently only for win_size=(512, 512), stride=(256, 256)
     for i in range(3):
         win_y = i * y_step
         for j in range(3):
@@ -84,8 +84,7 @@ def on_boundary(bbox, img_size, win_id):
     return flag
 
 def covered_ids(merged_img, mask):
-    """
-    merged_img中のmaskの領域内の画素値(id)のリストを得る
+    """Get a list of pixel values (id) in the area of mask in merged_img
     """
     covered_ids = merged_img[mask != 0].tolist()
     covered_ids = list(set(covered_ids)) # make it unique
@@ -95,9 +94,6 @@ def covered_ids(merged_img, mask):
     return covered_ids
 
 def overlap(mask1, mask2):
-    """
-    mask1とmask2の重なる領域の面積を求める
-    """
     intersection = np.logical_and(mask1, mask2)
     intersection_area = np.sum(intersection)
     return intersection_area
@@ -149,9 +145,9 @@ def save_masks(leaf_seg, save_folder, min_area):
 def save_masks_not_on_boundary(leaf_segs: list, save_folder: str, win_size: tuple=(512,512), min_area: int=0) -> None:
     """
     Args:
-        leaf_seg (list): samの出力（全windowでのmask）
-        save_folder (str): maskを保存するフォルダのdir
-        win_size (tuple(int, int)): sliding windowのもとのsize．
+        leaf_seg (list): output of sam（masks in all clops）
+        save_folder (str): save dir
+        win_size (tuple(int, int)): sliding window size
     """    
     dsize = (1024, 1024) # size of output mask img (resize to dsize)
     corners = get_window_corners(win_size)

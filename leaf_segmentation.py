@@ -85,25 +85,20 @@ def make_leaf_seg(masks_dirs: list, output_dir: str, config, VALIDATION_MODE=Fal
         #     f.write("max_area_th: " + str(max_area_th) + "\n")
         return
 
-if __name__ == '__main__':
+def setup_args():
     parser = argparse.ArgumentParser()
-    parser.add_argument("--masks_dir", type=str, help="path to dir of leaf mask dirs")
-    parser.add_argument("--output_dir", type=str)
-    parser.add_argument("--config", type=str, help="path to config file (.yaml)")
-    
+    parser.add_argument("--dataset", type=str, help="dataset name", choices={'phenobench', 'growliflower', 'sb20'})
+    parser.add_argument("--mode", type=str, help="dataset type", choices={'val', 'test'})
     args = parser.parse_args()
-    ###
-    temp_masks_dirs = glob.glob(os.path.join(args.masks_dir, "*/"))
-    masks_dirs = []
-    for temp_masks_dir in temp_masks_dirs:
-        if os.path.exists(os.path.join(args.output_dir, basename(temp_masks_dir) + ".png")):
-            continue
-        elif os.path.basename(temp_masks_dir) == "setup.txt":
-            continue
-        else:
-            masks_dirs.append(temp_masks_dir)
-    ### 
-    output_dir = args.output_dir
-    config_path = args.config
+    
+    return args
+
+if __name__ == '__main__':
+    args = setup_args()
+    masks_root_dir = os.path.join('output/leaf_mask', args.dataset, args.mode)
+    masks_dirs = glob.glob(os.path.join(masks_root_dir, "*/"))
+    output_dir = os.path.join('output/leaf_instance', args.dataset, args.mode)
+    os.makedirs(output_dir, exist_ok=False)
+    config_path = os.path.join('configs', args.dataset + '.yaml')
     
     make_leaf_seg(masks_dirs, output_dir, config_path)

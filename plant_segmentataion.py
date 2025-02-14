@@ -25,25 +25,10 @@ def load_binary_masks_as_dict(masks_dir) -> Dict[int, np.ndarray]:
     return {mask_id: mask for mask_id, mask in zip(mask_ids, masks)}
 
 def greedyDBSCANclustering(clustering_points, eps: float, min_samples: int, num_steps: int=10):
-    """
-    Algorithm:
-    1. clustered_pointsをDBSCANでクラスタリングする
-    2. 最大クラスタを取得．以降そのクラスタに含まれる点はクラスタリング対象から除外
-    3. 1.に戻る
-
-    Args:
-        clustered_points (list): クラスタリング対象点. shape: (n, 2)
-        eps (float): DBSCANのeps
-        min_samples (int): DBSCANのmin_samples
-        num_steps (int, optional): クラスタの数の最大値. Defaults to 10.
-
-    Returns:
-        _type_ (list): shape: (n,). 各点のクラスタ番号. クラスタに含まれなかった場合は-1
-    """
     
     # init
     clustering_result = np.array([-1] * len(clustering_points))
-    unclustered_idx_list = np.array(list(range(len(clustering_points)))) # 未クラスタリングの点のindex (初期値)
+    unclustered_idx_list = np.array(list(range(len(clustering_points)))) # index of unclustered points
     unclustered_points = np.array(clustering_points.copy())
     
     for i in range(num_steps):
@@ -53,7 +38,7 @@ def greedyDBSCANclustering(clustering_points, eps: float, min_samples: int, num_
         
         # get largest cluster
         outlier_removed_labels = labels[np.where(labels!=-1)]
-        if len(outlier_removed_labels) == 0: # これ以上クラスタが形成されない場合は終了
+        if len(outlier_removed_labels) == 0: # if no more clusters are formed, exit
             break
         else:
             counter = Counter(outlier_removed_labels)
@@ -66,10 +51,10 @@ def greedyDBSCANclustering(clustering_points, eps: float, min_samples: int, num_
             
             # remove clustered points in the largest cluster
             unclustered_idx_list = np.delete(unclustered_idx_list, largest_cluster_idx_list)
-            ## unclustered_pointsを再構築する
+            ## reform unclustered_points
             unclustered_points = np.array(clustering_points.copy())[unclustered_idx_list]
             
-            if unclustered_points.shape[0] == 0: # 全ての点がクラスタリングされれば終了
+            if unclustered_points.shape[0] == 0: # if the all the points are clustered, exit
                 break
     
     return clustering_result
@@ -210,19 +195,21 @@ def plant_segmentation(bgr_img_dir, masks_dirs: list, config_path, output_dir, G
     
     return plant_seg_wo_pp, plant_seg_w_pp
 
-if __name__ == "__main__":
+def setup_args():
     parser = argparse.ArgumentParser()
-    parser.add_argument('--img_dir', type=str, help='path to dir of bgr images')
-    parser.add_argument('--masks_dir', type=str, help='path to dir of leaf mask dirs')
-    parser.add_argument('--output_dir', type=str)
-    parser.add_argument('--config', type=str, help='path to config file (.yaml)')
-    parser.add_argument('--gen_new_cluster', default=True)
-    
+    parser.add_argument("--dataset", type=str, help="dataset name", choices={'phenobench', 'growliflower', 'sb20'})
+    parser.add_argument("--mode", type=str, help="dataset type", choices={'val', 'test'})
     args = parser.parse_args()
-    bgr_img_dir = args.img_dir
-    masks_dirs = glob.glob(os.path.join(args.masks_dir, '*'))
-    output_dir = args.output_dir
-    config_path = args.config
-    GENERATE_NEW_CLUSTER = args.gen_new_cluster
     
-    plant_segmentation(bgr_img_dir, masks_dirs, config_path, output_dir=output_dir, GENERATE_NEW_CLUSTER=GENERATE_NEW_CLUSTER)
+    return args
+
+if __name__ == "__main__":
+    args = setup_args()
+    bgr_img_dir = os.path.join('dataset', args.dataset, args.mode, 'images')
+    masks_root_dir = os.path.join('output/leaf_mask', args.dataset, args.mode)
+    masks_dirs = glob.glob(os.path.join(masks_root_dir, "*/"))
+    output_dir = os.path.join('output/plant_instance', args.dataset, args.mode)
+    os.makedirs(output_dir, exist_ok=False)
+    config_path = os.path.join('configs', args.dataset + '.yaml')
+    
+    plant_segmentation(bgr_img_dir, masks_dirs, config_path, output_dir=output_dir, GENERATE_NEW_CLUSTER=True)
