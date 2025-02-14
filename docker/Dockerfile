@@ -23,7 +23,6 @@ RUN echo 'root:'$ROOT_PASSWORD | chpasswd
 RUN groupadd -g $GID $GROUPNAME && \
     useradd -u $UID -g $GROUPNAME -G sudo -m -s $USE_SHELL $USERNAME && \
     echo $PASSWORD':'$PASSWORD | chpasswd $USERNAME
-#RUN useradd -u 1125 miyakawa
 
 #install packages
 RUN apt-get update && apt-get install -y \

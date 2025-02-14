@@ -96,6 +96,7 @@ def setup_args():
     parser = argparse.ArgumentParser()
     parser.add_argument("--dataset", type=str, help="dataset name", choices={'phenobench', 'growliflower', 'sb20'})
     parser.add_argument("--mode", type=str, help="dataset type", choices={'val', 'test'})
+    parser.add_argument("--testrun", action='store_true', help="test run (run on only one image)")
     args = parser.parse_args()
     
     return args
@@ -107,5 +108,8 @@ if __name__ == "__main__":
     output_dir = os.path.join('output/leaf_mask', args.dataset, args.mode)
     os.makedirs(output_dir, exist_ok=False)
     config_path = os.path.join('configs', args.dataset + '.yaml')
+    
+    if args.testrun:
+        img_paths = img_paths[:1]
     
     inference(img_paths, output_dir, config_path)
