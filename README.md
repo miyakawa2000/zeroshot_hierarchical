@@ -22,8 +22,3 @@ To get plant instance segmentation, run `plant_segmentation.py` with
 ```
 python3 leaf_segmentation.py --dataset ${dataset_name} --mode ${val_or_test}
 ```
-## 4. Evaluation
-To evaluate the result, run hoge.py with
-```
-hoge
-```

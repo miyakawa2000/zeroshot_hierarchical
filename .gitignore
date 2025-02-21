@@ -1,5 +1,6 @@
 baselines/*
 dataset/*
+evaluation/*
 output/
 GroundingDINO/weights/*
 OVSeg/weights/*
