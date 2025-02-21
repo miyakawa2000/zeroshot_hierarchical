@@ -103,7 +103,7 @@ def setup_args():
 
 if __name__ == "__main__":
     args = setup_args()
-    img_dir = os.path.join('datasets', args.dataset, args.mode, 'images')
+    img_dir = os.path.join('dataset', args.dataset, args.mode, 'images')
     img_paths = glob.glob(os.path.join(img_dir, "*.png"))
     output_dir = os.path.join('output/leaf_mask', args.dataset, args.mode)
     os.makedirs(output_dir, exist_ok=False)
