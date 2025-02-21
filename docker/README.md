@@ -2,8 +2,8 @@
 
 ## 0. Build the container
 ```
-bash docker_build.sh
-bash docker_run.sh
+bash build.sh
+bash run.sh
 ```
 
 
