@@ -30,7 +30,7 @@ wget -P ./GroundingDINO/weights/ https://github.com/IDEA-Research/GroundingDINO/
 ```
 
 ### in the case Error: "AttributeError: module 'PIL.Image' has no attribute 'LINEAR'"
-Please install detectron2 again with
+Please install detectron2 again as
 ```
 python3 -m pip install -U 'git+https://github.com/facebookresearch/detectron2.git@ff53992b1985b63bd3262b5a36167098e3dada02'
 ```
