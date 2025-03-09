@@ -17,7 +17,7 @@ To get leaf instance segmentation, run `leaf_segmentation.py` with
 ```
 python3 leaf_segmentation.py --dataset ${dataset_name} --mode ${val_or_test}
 ```
-## 3. Plant Instance Sementation
+## 3. Plant Instance Segmentation
 To get plant instance segmentation, run `plant_segmentation.py` with
 ```
 python3 leaf_segmentation.py --dataset ${dataset_name} --mode ${val_or_test}
