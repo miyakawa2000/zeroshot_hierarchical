@@ -9,9 +9,10 @@ from tqdm import tqdm
 
 from utils.path import basename
 from utils.fileio import str_to_tuple
-from evaluation.metrics import area
 from leafonlysam.LeafOnlySAM import istoobig, remove_toobig
 
+def area(mask: np.ndarray):
+    return np.count_nonzero(mask)
 
 def merge_leaf_masks(masks_dir: str, min_area_th: float=0, max_area_th: float=np.inf, th_ratio=0.9, output_img_size =(1024, 1024)):
     
